@@ -27,11 +27,11 @@ class Node:
         :return: 1 if the current version is lower, 0 if it is the same, -1 if it is higher
         :rtype: Int
         """
-        if self.md[k] == message[2][k]:
+        if self.ld[k] == message[1][k]:
             return 0
-        elif self.md[k] == True and message[2][k] == False:
+        elif self.ld[k] == True and message[1][k] == False:
             return -1
-        elif self.md[k] == False and message[2][k] == True:
+        elif self.ld[k] == False and message[1][k] == True:
             return 1
 
     def send_message(self):
@@ -57,12 +57,13 @@ class Node:
             # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
             for k in range(n_fragments):
-                if self.check_version(message, k) == 0:
+                check = self.check_version(message, k)
+                if check == 0:
                     self.c += 1
-                elif self.check_version(message, k) == -1:
+                elif check == -1:
                     version_change = False
                     self.send_message()
-                elif self.check_version(message, k) == 1:
+                elif check == 1:
                     version_change = False
                     self.ld[k] = message[1][k]
                     self.md[k] = message[2][k]
@@ -79,6 +80,8 @@ class Node:
 
 nodes = [Node(0, 0, 10, 2, 5, 100, 0, [], [True, True], [1, 1]),
          Node(1, 0, 10, 2, 5, 100, 0, [], [False, False], [2, 2])]
+
+nodes[1].messages = [(0, nodes[0].ld, nodes[0].md)]
 
 t = 2
 n_nodes = 2

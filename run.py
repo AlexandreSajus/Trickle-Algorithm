@@ -1,3 +1,5 @@
+# Implementing the Trickle algorithm
+
 from random import random
 
 
@@ -41,7 +43,7 @@ class Node:
         # Acts according to the time t
         if t == 0:
             # Reset c and tau if t = 0
-            c = 0
+            self.c = 0
             self.tau = random()*self.i/2 + self.i/2
 
         if t == self.tau and self.c < self.k:
@@ -56,7 +58,7 @@ class Node:
             message = self.messages.pop()
             for k in range(n_fragments):
                 if self.check_version(message, k) == 0:
-                    c += 1
+                    self.c += 1
                 elif self.check_version(message, k) == -1:
                     version_change = False
                     self.send_message()
@@ -78,7 +80,7 @@ class Node:
 nodes = [Node(0, 0, 10, 2, 5, 100, 0, [], [True, True], [1, 1]),
          Node(1, 0, 10, 2, 5, 100, 0, [], [False, False], [2, 2])]
 
-t = 0
+t = 2
 n_nodes = 2
 n_fragments = 2
 neighbors = {0: [1], 1: [0]}

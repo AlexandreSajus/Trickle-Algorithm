@@ -1,6 +1,4 @@
-# Implementing the Trickle algorithm
-
-from random import random
+from random import random, randint
 
 
 class Node:
@@ -27,11 +25,11 @@ class Node:
         :return: 1 if the current version is lower, 0 if it is the same, -1 if it is higher
         :rtype: Int
         """
-        if self.ld[k] == message[1][k]:
+        if self.md[k] == message[2][k]:
             return 0
-        elif self.ld[k] == True and message[1][k] == False:
+        elif self.md[k] == True and message[2][k] == False:
             return -1
-        elif self.ld[k] == False and message[1][k] == True:
+        elif self.md[k] == False and message[2][k] == True:
             return 1
 
     def send_message(self):
@@ -57,13 +55,12 @@ class Node:
             # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
             for k in range(n_fragments):
-                check = self.check_version(message, k)
-                if check == 0:
+                if self.check_version(message, k) == 0:
                     self.c += 1
-                elif check == -1:
+                elif self.check_version(message, k) == -1:
                     version_change = False
                     self.send_message()
-                elif check == 1:
+                elif self.check_version(message, k) == 1:
                     version_change = False
                     self.ld[k] = message[1][k]
                     self.md[k] = message[2][k]
@@ -81,12 +78,20 @@ class Node:
 nodes = [Node(0, 0, 10, 2, 5, 100, 0, [], [True, True], [1, 1]),
          Node(1, 0, 10, 2, 5, 100, 0, [], [False, False], [2, 2])]
 
-nodes[1].messages = [(0, nodes[0].ld, nodes[0].md)]
-
-t = 2
+t = 0
 n_nodes = 2
 n_fragments = 2
 neighbors = {0: [1], 1: [0]}
 
 nodes[1].act(t)
 print(nodes[1].md)
+
+
+if __name__ == "__main__":
+    A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
+    B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    C = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    D = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    E = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    neighbors = {0: [1, 3], 1: [2, 4], 2: [4], 3: [4], 4: [0, 1]}
+    

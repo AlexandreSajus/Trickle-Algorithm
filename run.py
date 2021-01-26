@@ -41,7 +41,7 @@ class Node:
         # Acts according to the time t
         if t == 0:
             # Reset c and tau if t = 0
-            c = 0
+            self.c = 0
             self.tau = random()*self.i/2 + self.i/2
 
         if t == self.tau and self.c < self.k:
@@ -56,7 +56,7 @@ class Node:
             message = self.messages.pop()
             for k in range(n_fragments):
                 if self.check_version(message, k) == 0:
-                    c += 1
+                    self.c += 1
                 elif self.check_version(message, k) == -1:
                     version_change = False
                     self.send_message()

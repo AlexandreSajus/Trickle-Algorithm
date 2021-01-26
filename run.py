@@ -1,4 +1,4 @@
-from random import random, randint
+from random import random, randint, uniform
 import numpy as np
 
 
@@ -37,7 +37,7 @@ class Node:
     def send_message(self):
         # Sends a message with the current version to neighbouring nodes
         for recipient in neighbors[self.id_number]:
-            recipient.messages.append(self.id_number, self.ld, self.md)
+            recipient.messages.append([self.id_number, self.ld, self.md])
 
     def act(self, t):
         # Acts according to the time t
@@ -106,10 +106,15 @@ class Node:
                 # if not, reset i and c
                 self.i = self.i_min
                 self.c = 0
+            self.tau = uniform(self.i/2, self.i)
+            self.t = 0
 
 
 def tourne(nodes, T_max):
     T_tot = 0
+    non_tau = []
+    non_i = []
+    duree_min = np.inf
     while T_tot < T_max:
         avant_tau = []
         avant_i = []
@@ -118,49 +123,49 @@ def tourne(nodes, T_max):
             duree_i = node.i - node.t
             if duree_tau >= 0:
                 avant_tau.append([node, duree_tau])
-            else:
-                avant_i.append([node, duree_i])
+            avant_i.append([node, duree_i])
         arg_min = None
         duree_min = np.inf
         apres_tau = False
         for elem in avant_tau:
             if elem[1] < duree_min:
-                duree_min = elem[1]
-                arg_min = elem[0]
+                if not elem[0] in non_tau:
+                    duree_min = elem[1]
+                    arg_min = elem[0]
         for elem in avant_i:
             if elem[1] < duree_min:
-                duree_min = elem[1]
-                arg_min = elem[0]
-                apres_tau = True
+                if not elem[0] in non_i:
+                    duree_min = elem[1]
+                    arg_min = elem[0]
+                    apres_tau = True
+        if duree_min > 0:
+            non_tau = []
+            non_i = []
         for node in nodes:
             node.t = node.t + duree_min
         T_tot = T_tot + duree_min
+        print(apres_tau)
         arg_min.act_2(apres_tau)
+        if apres_tau == False:
+            non_tau.append(arg_min)
+        else:
+            non_i.append(arg_min)
     return nodes
 
 
-nodes = [Node(0, 0, 10, 2, 5, 100, 0, [], [True, True], [1, 1]),
-         Node(1, 0, 10, 2, 5, 100, 0, [], [False, False], [2, 2])]
-
-t = 0
-n_nodes = 2
-n_fragments = 2
-neighbors = {0: [1], 1: [0]}
-
-nodes[1].act(t)
-print(nodes[1].md)
-
-
 if __name__ == "__main__":
-    A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+    A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
-    B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+    B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+    C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+    D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+    E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    neighbors = {0: [1, 3], 1: [2, 4], 2: [4], 3: [4], 4: [0, 1]}
+    neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
+    nodes = [A, B, C, D, E]
+    n_fragments = 2
     tourne(nodes, 80)
+    print([A.md, B.md, C.md, D.md, E.md])

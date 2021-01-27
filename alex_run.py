@@ -34,12 +34,12 @@ class Node:
         elif self.md[k] == False and message[2][k] == True:
             return 1
 
-    def send_message(self):
+    def send_message(self, neighbors):
         # Sends a message with the current version to neighbouring nodes
         for recipient in neighbors[self.id_number]:
             recipient.messages.append([self.id_number, self.ld, self.md])
 
-    def act_2(self, apres_tau):
+    def act_2(self, apres_tau, neighbors):
        # check if any version received in messages is different from the current one
         version_change = True
 
@@ -52,7 +52,7 @@ class Node:
                     self.c += 1
                 elif self.check_version(message, k) == -1:
                     version_change = False
-                    self.send_message()
+                    self.send_message(neighbors)
                 elif self.check_version(message, k) == 1:
                     version_change = False
                     self.ld[k] = message[1][k]
@@ -60,7 +60,7 @@ class Node:
 
         if self.c < self.k and apres_tau == False:
             # if c < k, send our version to neighbouring
-            self.send_message()
+            self.send_message(neighbors)
 
         if apres_tau == True:
             if version_change == True:
@@ -74,7 +74,10 @@ class Node:
             self.t = 0
 
 
-def tourne(nodes, T_max):
+n_fragments = 2
+
+
+def tourne(nodes, T_max, neighbors):
     '''Fait tourner le réseau pendant T_max'''
     T_tot = 0  # Durée totale de l'expérience
     non_tau = []  # à ne pas refaire agire, initialiser
@@ -109,7 +112,8 @@ def tourne(nodes, T_max):
         for node in nodes:
             node.t = node.t + duree_min  # le temps avance de durée_min
         T_tot = T_tot + duree_min  # le temps avance de durée min
-        arg_min.act_2(apres_tau)  # on fait agir le noeud qui arrive à échéance
+        # on fait agir le noeud qui arrive à échéance
+        arg_min.act_2(apres_tau, neighbors)
         if apres_tau == False:
             # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
             non_tau.append(arg_min)
@@ -125,7 +129,7 @@ def tourne(nodes, T_max):
     return nodes
 
 
-def tourne_pas_a_pas(liste):
+def tourne_pas_a_pas(liste, neighbors):
     '''liste = [node,non_tau_non_i]'''
     duree_min = np.inf  # durée minimale avant la prochaine action, initialiser
     avant_tau = []
@@ -158,7 +162,8 @@ def tourne_pas_a_pas(liste):
         non_i = []
     for node in nodes:
         node.t = node.t + duree_min  # le temps avance de durée_min
-    arg_min.act_2(apres_tau)  # on fait agir le noeud qui arrive à échéance
+    # on fait agir le noeud qui arrive à échéance
+    arg_min.act_2(apres_tau, neighbors)
     if apres_tau == False:
         # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
         non_tau.append(arg_min)

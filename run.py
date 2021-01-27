@@ -153,6 +153,12 @@ def tourne(nodes, T_max):
         else:
             # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
             non_i.append(arg_min)
+        nouvelle_trace = []
+        for node in nodes:
+            nouvelle_trace.append(
+                [node.id_number, node.i, node.tau, node.t, node.md])
+            new = nouvelle_trace.copy()
+        print(new)
     return nodes
 
 
@@ -170,5 +176,4 @@ if __name__ == "__main__":
     neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
     nodes = [A, B, C, D, E]
     n_fragments = 2
-    tourne(nodes, 80)
-    print([A.md, B.md, C.md, D.md, E.md])
+    tourne(nodes, 20)

@@ -163,17 +163,37 @@ def tourne(nodes, T_max):
 
 
 if __name__ == "__main__":
-    A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
-    B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
-    nodes = [A, B, C, D, E]
-    n_fragments = 2
-    tourne(nodes, 20)
+<< << << < HEAD
+A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+         ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
+B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+neighbors = {0: [1, 3], 1: [2, 4], 2: [4], 3: [4], 4: [0, 1]}
+
+== == == =
+A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
+         ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
+B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
+         ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
+nodes = [A, B, C, D, E]
+n_fragments = 2
+<< << << < HEAD
+tourne(nodes, 20)
+== == == =
+tourne(nodes, 80)
+print([A.md, B.md, C.md, D.md, E.md])
+>>>>>> > 20bbda5f3a7ce06df096f40011330da9f847377d
+>>>>>> > 6d20a01b8513f396943fc530ab47e71497c4bf8f

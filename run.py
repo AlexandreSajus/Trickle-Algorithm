@@ -90,8 +90,8 @@ print(nodes[1].md)
 if __name__ == "__main__":
     A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
     B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    C = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    D = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
-    E = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    D = Node(3, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
+    E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1, 0, [], ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
     neighbors = {0: [1, 3], 1: [2, 4], 2: [4], 3: [4], 4: [0, 1]}
     

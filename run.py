@@ -48,7 +48,7 @@ class Node:
             # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
             for k in range(len(self.ld)):
-                check_version = selc.check_version(message, k)
+                check_version = self.check_version(message, k)
                 if check_version == 0:
                     self.c += 1
                 elif check_version == -1:

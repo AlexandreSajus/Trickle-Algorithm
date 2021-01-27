@@ -1,6 +1,6 @@
 # Create an animation using matplotlib and networkx illustrating the evolving graph
 
-from run import Node
+from alex_run import Node, tourne_pas_a_pas
 
 from random import random, randint
 from matplotlib.animation import FuncAnimation
@@ -22,6 +22,9 @@ E = Node(4, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
 neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
 nodes = [A, B, C, D, E]
 
+non_tau = []
+non_i = []
+
 
 def animate_nodes(nodes):
 
@@ -39,6 +42,11 @@ def animate_nodes(nodes):
 
     # Update function
     def update(i):
+        global nodes, non_tau, non_i
+        # Execute a step of the simulation
+        [nodes, non_tau, non_i] = tourne_pas_a_pas(
+            [nodes, non_tau, non_i], neighbors)
+
         node_list_red = []  # Nodes with updated version
         node_list_blue = []  # Outdated nodes
         edge_list = []  # Edges
@@ -77,7 +85,7 @@ def animate_nodes(nodes):
 
     # Matplotlib animation function
     fig = plt.gcf()
-    animation = FuncAnimation(fig, update, interval=500,
+    animation = FuncAnimation(fig, update, interval=1000,
                               frames=1000)
     return animation
 

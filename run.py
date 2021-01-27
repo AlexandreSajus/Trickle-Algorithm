@@ -153,6 +153,12 @@ def tourne(nodes, T_max):
         else:
             # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
             non_i.append(arg_min)
+        nouvelle_trace = []
+        for node in nodes:
+            nouvelle_trace.append(
+                [node.id_number, node.i, node.tau, node.t, node.md])
+            new = nouvelle_trace.copy()
+        print(new)
     return nodes
 
 if __name__ == "__main__":

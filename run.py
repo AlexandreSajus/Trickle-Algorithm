@@ -178,6 +178,3 @@ if __name__ == "__main__":
     nodes = [A, B, C, D, E]
     n_fragments = 2
     tourne(nodes, 20)
-    print([A.md, B.md, C.md, D.md, E.md])
-    '''>>>>>> > 20bbda5f3a7ce06df096f40011330da9f847377d
-    >>>>>> > 6d20a01b8513f396943fc530ab47e71497c4bf8f'''

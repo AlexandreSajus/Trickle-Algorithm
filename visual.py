@@ -1,7 +1,7 @@
 # Create an animation using matplotlib and networkx illustrating the evolving graph
 
 
-from alex_run import Node, tourne_pas_a_pas
+from node import Node, tourne_pas_a_pas
 from random import random, randint
 from matplotlib.animation import FuncAnimation
 import networkx as nx

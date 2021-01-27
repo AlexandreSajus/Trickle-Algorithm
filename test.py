@@ -71,7 +71,9 @@ class run_tests(unittest.TestCase):
         assert E.c == 4
         assert E.messages == []
         # Same : E send a message
+        print(A.ld)
         A.act_2(True, neighbors)
+        print(A.ld)
         print(A.c)
         assert A.c == 2
         assert A.i == 1/2

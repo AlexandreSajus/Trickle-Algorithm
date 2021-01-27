@@ -47,7 +47,7 @@ class Node:
         while len(self.messages) > 0:
             # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
-            for k in range(n_fragments):
+            for k in range(len(self.ld)):
                 if self.check_version(message, k) == 0:
                     self.c += 1
                 elif self.check_version(message, k) == -1:
@@ -62,8 +62,8 @@ class Node:
             # if c < k, send our version to neighbouring
             self.send_message()
 
-        if apres_tau == True:
-            if version_change == True:
+        if apres_tau:
+            if version_change:
                 # if a version was different, extend i
                 self.i = self.i*2
             else:
@@ -139,5 +139,4 @@ if __name__ == "__main__":
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
     neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
     nodes = [A, B, C, D, E]
-    n_fragments = 2
     tourne(nodes, 20)

@@ -39,43 +39,6 @@ class Node:
         for recipient in neighbors[self.id_number]:
             recipient.messages.append([self.id_number, self.ld, self.md])
 
-    def act(self, t):
-        # Acts according to the time t
-        if t == 0:
-            # Reset c and tau if t = 0
-            self.c = 0
-            self.tau = random()*self.i/2 + self.i/2
-
-        if t == self.tau and self.c < self.k:
-            # at time tau, if c < k, send our version to neighbouring
-            self.send_message()
-
-        # check if any version received in messages is different from the current one
-        version_change = True
-
-        while len(self.messages) > 0:
-            # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
-            message = self.messages.pop()
-            for k in range(n_fragments):
-                if self.check_version(message, k) == 0:
-                    self.c += 1
-                elif self.check_version(message, k) == -1:
-                    version_change = False
-                    self.send_message()
-                elif self.check_version(message, k) == 1:
-                    version_change = False
-                    self.ld[k] = message[1][k]
-                    self.md[k] = message[2][k]
-
-        if t > self.i:
-            if version_change == True:
-                # if a version was different, extend i
-                self.i = self.i*2
-            else:
-                # if not, reset i and c
-                self.i = self.i_min
-                self.c = 0
-
     def act_2(self, apres_tau):
        # check if any version received in messages is different from the current one
         version_change = True

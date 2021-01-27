@@ -125,6 +125,52 @@ def tourne(nodes, T_max):
     return nodes
 
 
+def tourne_pas_a_pas(nodes, non_tau, non_i):
+    '''Fait tourner tourne une seule fois'''
+    duree_min = np.inf
+    avant_tau = []
+    avant_i = []
+    for node in nodes:
+        duree_tau = node.tau - node.t
+        duree_i = node.i - node.t
+        if duree_tau >= 0:
+            avant_tau.append([node, duree_tau])
+        avant_i.append([node, duree_i])
+    arg_min = None
+    duree_min = np.inf
+    apres_tau = False
+    for elem in avant_tau:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à tau?
+        if elem[1] < duree_min:
+            if not elem[0] in non_tau:
+                duree_min = elem[1]
+                arg_min = elem[0]
+    for elem in avant_i:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à i?
+        if elem[1] < duree_min:
+            if not elem[0] in non_i:
+                duree_min = elem[1]
+                arg_min = elem[0]
+                apres_tau = True
+    if duree_min > 0:  # Si on a bougé en temps depuis la dernière fois, on peut refaire agir les noeuds ayant agi la dernière fois
+        non_tau = []
+        non_i = []
+    for node in nodes:
+        # le temps avance de durée_min  # le temps avance de durée min
+        node.t = node.t + duree_min
+    arg_min.act_2(apres_tau)  # on fait agir le noeud qui arrive à échéance
+    if apres_tau == False:
+        # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
+        non_tau.append(arg_min)
+    else:
+        # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
+        non_i.append(arg_min)
+    nouvelle_trace = []
+    for node in nodes:
+        nouvelle_trace.append(
+            [node.id_number, node.i, node.tau, node.t, node.md])
+        new = nouvelle_trace.copy()
+    return [nodes, non_tau, non_i]
+
+
 if __name__ == "__main__":
 
     A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
@@ -140,3 +186,4 @@ if __name__ == "__main__":
     neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
     nodes = [A, B, C, D, E]
     tourne(nodes, 20)
+

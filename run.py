@@ -48,12 +48,13 @@ class Node:
             # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
             for k in range(len(self.ld)):
-                if self.check_version(message, k) == 0:
+                check_version = selc.check_version(message, k)
+                if check_version == 0:
                     self.c += 1
-                elif self.check_version(message, k) == -1:
+                elif check_version == -1:
                     version_change = False
                     self.send_message()
-                elif self.check_version(message, k) == 1:
+                elif check_version == 1:
                     version_change = False
                     self.ld[k] = message[1][k]
                     self.md[k] = message[2][k]
@@ -172,7 +173,6 @@ def tourne_pas_a_pas(nodes, non_tau, non_i):
 
 
 if __name__ == "__main__":
-
     A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
     B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],

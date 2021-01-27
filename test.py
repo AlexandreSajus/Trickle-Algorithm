@@ -1,9 +1,9 @@
 import unittest
 from run import *
-import random as rd
+from random import random, randint
 
 A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
-             ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
+            ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
 B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
             ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
 C = Node(2, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
@@ -19,32 +19,38 @@ class run_tests(unittest.TestCase):
     def test_shape_and_check_version(self, nodes, neighbors):
         # Checks whether A has the adequate shape
         A = nodes[0]
-        assert(A.id_number == 0)
-        assert(A.i_min == 1)
-        assert(A.i_max == 2)
-        assert(int(A.k) == A.k and 1 <= A.k <= 3)
-        assert(A.i == 1)
-        assert(A.i /2 <= A.tau <= A.i)
-        assert(A.c == 0)
-        assert(A.messages == [])
-        assert(A.ld == ["code_fragment_1_version_2",
-                        "code_fragment_2_version_2"])
-        assert(A.md == [True, True])
+        assert A.id_number == 0
+        assert A.i_min == 1
+        assert A.i_max == 2
+        assert int(A.k) == A.k and 1 <= A.k <= 3
+        assert A.i == 1
+        assert A.i /2 <= A.tau <= A.i
+        assert A.c == 0
+        assert A.messages == []
+        assert A.ld == ["code_fragment_1_version_2",
+                        "code_fragment_2_version_2"]
+        assert A.md == [True, True]
 
         vers_check = A.check_version(
             (1, ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False]), 1)
-        assert(vers_check == -1)
+        assert vers_check == -1
     
     def test_send_message(self, nodes, neighbors):
         A = nodes[0]
         A.send_message()
         for node in neighbors[A.id_number]:
-            assert([0, ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True]] in node.messages)
+            assert [0, ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True]] in node.messages
         
     def test_act_2(self, A, B, C, D, E, neighbors):
         # A doesn't send a message again to avoid redundancy (because we tested send_message before)
         for node in nodes:
-            node.send_message()
+            if node.id_number != 0:
+                if node.check_version(node.messages[0], 1) or node.check_version(node.messages[0], 2) or (node.t == node.tau and node.c < node.k):
+                    node.send_message()
+        A, B, C, D, E = nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]
+        A.act_2(False) # We are at t < tau
+        assert A.c == 0 # A.c didn't change because all nodes except A had a lower version
+        
         
 
 

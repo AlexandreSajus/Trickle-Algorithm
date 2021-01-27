@@ -1,5 +1,5 @@
 import unittest
-from alex_run import *
+from node import Node
 from random import random, randint
 
 A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],

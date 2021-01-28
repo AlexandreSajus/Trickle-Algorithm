@@ -1,3 +1,5 @@
+#Experimental version, to be tested/commented
+
 from random import random, randint, uniform
 import numpy as np
 

@@ -1,7 +1,6 @@
 # Create an animation using matplotlib and networkx illustrating the evolving graph
 
-
-from node import Node, tourne_pas_a_pas
+from node import Node, next_step
 from time import time
 from random import random, randint
 from matplotlib.animation import FuncAnimation
@@ -44,6 +43,7 @@ def create_simple_graph(n_nodes, neighbor_p, updated_p):
     return nodes, neighbors
 
 
+# Creates a graph with 40 nodes
 nodes, neighbors = create_simple_graph(40, 0.04, 0.3)
 
 
@@ -77,8 +77,7 @@ def animate_nodes(nodes):
     def update(i):
         global nodes, non_tau, non_i
         # Execute a step of the simulation
-        [nodes, non_tau, non_i] = tourne_pas_a_pas(
-            [nodes, non_tau, non_i], neighbors)
+        nodes, non_tau, non_i = next_step(neighbors, nodes, non_tau, non_i)
 
         ax.clear()
         ax.set_title(

@@ -1,5 +1,10 @@
+# Creates the Node object and the next_step function
+
 from random import random, randint, uniform
 import numpy as np
+
+# length of LD and MD, number of fragments of software
+n_fragments = 2
 
 
 class Node:
@@ -39,13 +44,12 @@ class Node:
         for recipient in neighbors[self.id_number]:
             recipient.messages.append([self.id_number, self.ld, self.md])
 
-    def act_2(self, apres_tau, neighbors):
+    def act(self, after_tau, neighbors):
        # check if any version received in messages is different from the current one
         version_change = True
 
-        # le noeud a reçu ses messages AVANT de regarder ce qu'il fait.
         while len(self.messages) > 0:
-            # check the messages, if the current version is lower, update; if it is higher, send it to neighbouring nodes
+            # check the messages, if the current version is lower than the one received, update; if it is higher, send it to neighbouring nodes
             message = self.messages.pop()
             for k in range(n_fragments):
                 check_version = self.check_version(message, k)
@@ -59,11 +63,11 @@ class Node:
                     self.ld[k] = message[1][k]
                     self.md[k] = message[2][k]
 
-        if self.c < self.k and apres_tau == False:
-            # if c < k, send our version to neighbouring
+        if self.c < self.k and after_tau == False:
+            # if c < k, send our version to neighbouring nodes
             self.send_message(neighbors)
 
-        if apres_tau:
+        if after_tau:
             if version_change:
                 # if a version was different, extend i
                 self.i = self.i*2
@@ -75,107 +79,58 @@ class Node:
             self.t = 0
 
 
-n_fragments = 2
-
-
-def tourne(nodes, T_max, neighbors):
-    '''Fait tourner le réseau pendant T_max'''
-    T_tot = 0  # Durée totale de l'expérience
-    non_tau = []  # à ne pas refaire agire, initialiser
-    non_i = []  # à ne pas refaire agire, initialiser
-    duree_min = np.inf  # durée minimale avant la prochaine action, initialiser
-    while T_tot < T_max:
-        avant_tau = []
-        avant_i = []
-        for node in nodes:
-            duree_tau = node.tau - node.t
-            duree_i = node.i - node.t
-            if duree_tau >= 0:
-                avant_tau.append([node, duree_tau])
-            avant_i.append([node, duree_i])
-        arg_min = None
-        duree_min = np.inf
-        apres_tau = False
-        for elem in avant_tau:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à tau?
-            if elem[1] < duree_min:
-                if not elem[0] in non_tau:
-                    duree_min = elem[1]
-                    arg_min = elem[0]
-        for elem in avant_i:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à i?
-            if elem[1] < duree_min:
-                if not elem[0] in non_i:
-                    duree_min = elem[1]
-                    arg_min = elem[0]
-                    apres_tau = True
-        if duree_min > 0:  # Si on a bougé en temps depuis la dernière fois, on peut refaire agir les noeuds ayant agi la dernière fois
-            non_tau = []
-            non_i = []
-        for node in nodes:
-            node.t = node.t + duree_min  # le temps avance de durée_min
-        T_tot = T_tot + duree_min  # le temps avance de durée min
-        # on fait agir le noeud qui arrive à échéance
-        arg_min.act_2(apres_tau, neighbors)
-        if apres_tau == False:
-            # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
-            non_tau.append(arg_min)
-        else:
-            # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
-            non_i.append(arg_min)
-        nouvelle_trace = []
-        for node in nodes:
-            nouvelle_trace.append(
-                [node.id_number, node.i, node.tau, node.t, node.md])
-            new = nouvelle_trace.copy()
-        print(new)
-    return nodes
-
-
-def tourne_pas_a_pas(liste, neighbors):
-    '''liste = [node,non_tau_non_i]'''
-    duree_min = np.inf  # durée minimale avant la prochaine action, initialiser
-    avant_tau = []
-    avant_i = []
-    nodes = liste[0]
-    non_tau = liste[1]
-    non_i = liste[2]
+def next_step(neighbors, nodes, not_tau=[], non_i=[]):
+    before_tau = []  # list of [node, duration_tau] such as t - tau < 0
+    before_i = []  # list of [node, duration_i] such as t - i < 0
     for node in nodes:
-        duree_tau = node.tau - node.t
-        duree_i = node.i - node.t
-        if duree_tau >= 0:
-            avant_tau.append([node, duree_tau])
-        avant_i.append([node, duree_i])
+        duration_tau = node.tau - node.t
+        duration_i = node.i - node.t
+        if duration_tau >= 0:
+            before_tau.append([node, duration_tau])
+        if duration_i >= 0:
+            before_i.append([node, duration_i])
+
+    # We look for the node that will act first by finding the minimal duration_i or duration_tau
     arg_min = None
-    duree_min = np.inf
-    apres_tau = False
-    for elem in avant_tau:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à tau?
-        if elem[1] < duree_min:
-            if not elem[0] in non_tau:
-                duree_min = elem[1]
+    duration_min = np.inf
+    after_tau = False  # Checks if the next action is caused by tau or i
+    for elem in before_tau:  # Browse through duration_tau
+        if elem[1] < duration_min:
+            # We check if the node hasn't acted during the previous step, if it did it would cause duration_tau to be equal to 0
+            if not elem[0] in not_tau:
+                duration_min = elem[1]
                 arg_min = elem[0]
-    for elem in avant_i:  # trouver le noeud qui va agir en prochain. Est-ce en arrivant à i?
-        if elem[1] < duree_min:
+    for elem in before_i:  # Browse through duration_i
+        if elem[1] < duration_min:
+            # We check if the node hasn't acted during the previous step, if it did it would cause duration_i to be equal to 0
             if not elem[0] in non_i:
-                duree_min = elem[1]
+                duration_min = elem[1]
                 arg_min = elem[0]
-                apres_tau = True
-    if duree_min > 0:  # Si on a bougé en temps depuis la dernière fois, on peut refaire agir les noeuds ayant agi la dernière fois
-        non_tau = []
+                after_tau = True
+
+    # not_tau and not_i keep track of every node that acts according to tau or i at this step
+    # so that they don't act again at the next step
+    if duration_min > 0:
+        not_tau = []
         non_i = []
+
     for node in nodes:
-        node.t = node.t + duree_min  # le temps avance de durée_min
-    # on fait agir le noeud qui arrive à échéance
-    arg_min.act_2(apres_tau, neighbors)
-    if apres_tau == False:
-        # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
-        non_tau.append(arg_min)
+        node.t = node.t + duration_min  # time increases
+
+    # the chosen node acts according to its act function
+    arg_min.act(after_tau, neighbors)
+
+    if after_tau == False:
+        # if the node acted according to tau, we add it to not_tau
+        not_tau.append(arg_min)
     else:
-        # ne pas refaire agir ce noeud tant qu'on a pas changé d'instant
+        # same with not_i
         non_i.append(arg_min)
-    return [nodes, non_tau, non_i]
+    return nodes, not_tau, non_i
 
 
 if __name__ == "__main__":
-
+    # An example graph
     A = Node(0, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
              ["code_fragment_1_version_2", "code_fragment_2_version_2"], [True, True])
     B = Node(1, 1, 2, randint(1, 3), 1, random()*1/2 + 1/2, 0, [],
@@ -188,4 +143,3 @@ if __name__ == "__main__":
              ["code_fragment_1_version_1", "code_fragment_2_version_1"], [False, False])
     neighbors = {0: [B, D], 1: [D, E], 2: [E], 3: [E, C], 4: [A, B]}
     nodes = [A, B, C, D, E]
-    n_fragments = 2

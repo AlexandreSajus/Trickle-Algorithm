@@ -1,4 +1,4 @@
-#Experimental version, to be tested/commented
+# Experimental version, to be tested/commented
 
 from random import random, randint, uniform
 import numpy as np
@@ -6,12 +6,14 @@ import numpy as np
 
 class Node:
     def __init__(self, id_number, i_min, i_max, k, i, tau, c, messages, ld, md, t=0):
+        '''tau est inutile ici'''
         self.id_number = id_number  # identifies the node, Int
         self.i_min = i_min  # minimum of interval I
         self.i_max = i_max  # maximum of interval I
         self.k = k  # redundancy indicator k
         self.i = i  # current value of I
-        self.tau = tau  # at what time does the node transfer its version
+        # at what time does the node transfer its version
+        self.tau = i/2 + uniform(i/2, i)
         self.c = c  # number of neighbouring nodes with the same version
         # mailbox, messages from other nodes will be stored in this list as tuples (id_number, ld, md)
         self.messages = messages
